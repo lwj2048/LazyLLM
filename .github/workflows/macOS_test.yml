@@ -1,12 +1,11 @@
 name: Test on macOS 
 
 on:
-  push:
-    branches:
-      - main
-  pull_request_target:
-    branches:
-      - main
+  workflow_run:
+    workflows:
+      - Lint And Build Package
+    types:
+      - completed
   workflow_dispatch:
 
 concurrency:
