@@ -9,7 +9,12 @@ on:
   workflow_dispatch:
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.event_name == 'pull_request_target' && github.event.pull_request.id || github.ref }}
+  group: |
+    ${{ github.workflow }}-${{ 
+      github.event_name == 'pull_request_target' && github.event.pull_request.id 
+      || github.event_name == 'pull_request' && github.event.pull_request.id
+      || github.ref_name 
+    }}
   cancel-in-progress: true
 
 env:
@@ -51,6 +56,10 @@ jobs:
           
       - name: Copy poetry.lock to root directory
         run: |
+          echo ${{ github.event_name }} "github.event_name"
+          echo ${{ github.event.pull_request.head.repo.full_name }}
+          echo ${{ github.repository }}
+          cat .readthedocs.yaml |wc -l
           git branch
           cd LazyLLM-Env &&git branch 
           cd ..
