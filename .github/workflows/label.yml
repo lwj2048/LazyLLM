@@ -1,0 +1,30 @@
+name: Add Label on Approve
+
+on:
+  pull_request_review:
+    types:
+      - submitted  
+
+jobs:
+  add-label-on-approve:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check if Review is Approved
+        if: ${{ github.event.review.state == 'approved' }}
+        run: echo "PR has been approved. Proceeding to add label."
+
+      - name: Add Label to PR
+        if: ${{ github.event.review.state == 'approved' }}
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const label = "can_run_test";
+
+            // 给当前 PR 添加标签
+            await github.issues.addLabels({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.payload.pull_request.number,
+              labels: [label],
+            });

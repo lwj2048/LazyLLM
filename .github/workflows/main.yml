@@ -1,12 +1,17 @@
 name: LazyLLM ci
 
 on:
-  workflow_run:
-    workflows:
-      - Lint And Build Package
-    types:
-      - completed
   workflow_dispatch:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+    paths-ignore:
+      - "**.md"
+      - ".git*"
+      - "docs/assets/**"
 
 env:
   CI_PATH: '/home/mnt/platform_ci/GitHub/${{ github.repository }}/${GITHUB_RUN_NUMBER}'
