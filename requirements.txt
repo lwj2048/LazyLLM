@@ -30,6 +30,6 @@ sqlalchemy
 psutil
 pypdf
 pytest
-numpy==1.26.4
+numpy==1.26.5
 pymilvus
 async-timeout
