@@ -18,9 +18,42 @@ env:
   PYTHON_VERSION: "3.10.9"
 
 jobs:
-  win-basic_tests:
-    runs-on: windows-latest
+  approval-check:
+    runs-on: ubuntu-latest
+    steps:
+      # 判断是否需要审批
+      - name: Check if approval is required
+        id: check-approval
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const reviews = await github.rest.pulls.listReviews({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: context.payload.pull_request.number,
+            });
+            
+            // 检查是否已获批准
+            const isApproved = reviews.data.some(review => review.state === 'APPROVED');
+            const noApprovalRequiredUsers = ['user1', 'user2']; // 不需要审批的用户名列表
+            const prUser = context.payload.pull_request.user.login;
 
+            core.setOutput('approved', isApproved);
+            core.setOutput('skipApproval', noApprovalRequiredUsers.includes(prUser));
+          result-encoding: string
+
+      # 等待 Approval，如果需要
+      - name: Wait for approval
+        if: steps.check-approval.outputs.approved != 'true' && steps.check-approval.outputs.skipApproval != 'true'
+        uses: githubocto/wait-for-commit-action@v1
+        with:
+          wait-for: approval
+        timeout-minutes: 60
+
+  win-basic_tests:
+    if: steps.check-approval.outputs.approved == 'true' || steps.check-approval.outputs.skipApproval == 'true'
+    runs-on: windows-latest
+    needs: approval-check
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -108,10 +141,9 @@ jobs:
 
 
   win-charge_tests:
-    if: |
-      !contains(github.event.head_commit.message, '[skip ci]')
-      && !contains(github.event.pull_request.title, '[skip ci]')
+    if: steps.check-approval.outputs.approved == 'true' || steps.check-approval.outputs.skipApproval == 'true'
     runs-on: windows-latest
+    needs: approval-check
 
     steps:
       - uses: actions/checkout@v4
