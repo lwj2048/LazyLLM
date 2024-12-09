@@ -1,17 +1,11 @@
 name: LazyLLM ci
 
 on:
-  workflow_dispatch:
-  push:
-    branches:
-      - main
-  pull_request:
-    branches:
-      - main
-    paths-ignore:
-      - "**.md"
-      - ".git*"
-      - "docs/assets/**"
+  workflow_run:
+    workflows:
+      - Lint And Build Package
+    types:
+      - completed
 
 env:
   CI_PATH: '/home/mnt/platform_ci/GitHub/${{ github.repository }}/${GITHUB_RUN_NUMBER}'
@@ -21,29 +15,9 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  test_lint:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.10.9'
-
-      - name: Install dependencies
-        run: |
-          echo ${{ github.event_name }} "github.event_name"
-          echo ${{ github.event.pull_request.head.repo.full_name }}
-          echo ${{ github.repository }}
-          echo ${{ github.workflow }}-${{ github.ref }}
-          cat .readthedocs.yaml |wc -l
   Clone:
-    if: |
-      !contains(github.event.head_commit.message, '[skip ci]')
-      && !contains(github.event.pull_request.title, '[skip ci]')
-    runs-on: tps_sco_nv
+    if: ${{ github.event.workflow_run.conclusion == 'success' }} 
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -144,3 +118,4 @@ jobs:
           mkdir -p $LAZYLLM_HOME
           source ~/ENV/env.sh
           python -m pytest --lf --last-failed-no-failures=all --durations=0 --reruns=2 -v tests/charge_tests
+
