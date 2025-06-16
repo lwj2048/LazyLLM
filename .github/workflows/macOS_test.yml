@@ -16,7 +16,7 @@ concurrency:
 
 env:
   POETRY_VERSION: "1.8.3"
-  PYTHON_VERSION: "3.10.9"
+  PYTHON_VERSION: "3.10.9"cd
   
 jobs:
   macos-basic_tests:
@@ -123,6 +123,14 @@ jobs:
         env :
          GITHUB_TOKEN: ${{ secrets.PERSONAL_GITHUB_TOKEN }}      
 
+      - name: ls
+        if: always()
+        shell: bash
+        run: |
+          pwd
+          ls -a
+          ls -a tests/basic_tests/
+          ls -a tests/basic_tests/.pytest_cache
       - name: Save pytest cache
         if: always()
         uses: actions/cache/save@v4
