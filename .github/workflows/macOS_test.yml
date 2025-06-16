@@ -108,7 +108,7 @@ jobs:
       - name: Restore pytest cache
         uses: actions/cache/restore@v4
         with:
-          path: tests/basic_tests/.pytest_cache
+          path: tests/basic_tests/.pytest-cache
           key: ${{ github.job }}-${{ github.sha }}
 
       - name: basic_tests
@@ -130,12 +130,12 @@ jobs:
           pwd
           ls -a
           ls -a tests/basic_tests/
-          ls -a tests/basic_tests/.pytest_cache
+          ls -a tests/basic_tests/.pytest-cache
       - name: Save pytest cache
         if: always()
         uses: actions/cache/save@v4
         with:
-          path: tests/basic_tests/.pytest_cache
+          path: tests/basic_tests/.pytest-cache
           key: ${{ github.job }}-${{ github.sha }}
 
   # macos-charge_tests:
