@@ -76,7 +76,6 @@ jobs:
       - name: Copy poetry.lock to root directory
         shell: bash
         run: |
-          echo ${{ github.job }}-${{ github.sha }}
           git branch
           cd LazyLLM-Env && git branch
           cd ..
@@ -121,7 +120,7 @@ jobs:
         uses: actions/cache/restore@v4
         with:
           path: tests/basic_tests/.pytest-cache
-          key: ${{ github.job }}-${{ github.event_name == 'pull_request_target' && github.event.pull_request.id || github.ref }}
+          key: ${{ github.job }}-${{ github.event_name == 'pull_request_target' && github.event.pull_request.head.sha || github.sha }}
 
       - name: basic_tests
         shell: bash
@@ -144,13 +143,14 @@ jobs:
           ls 
           ls -a tests/basic_tests/
           ls -a tests/basic_tests/.pytest-cache/
+          echo ${{ github.event_name == 'pull_request_target' && github.event.pull_request.head.sha || github.sha }}
 
       - name: Save pytest cache
         if: always()
         uses: actions/cache/save@v4
         with:
           path: tests/basic_tests/.pytest-cache
-          key: ${{ github.job }}-${{ github.event_name == 'pull_request_target' && github.event.pull_request.id || github.ref }}
+          key: ${{ github.job }}-${{ github.event_name == 'pull_request_target' && github.event.pull_request.head.sha || github.sha }}
 
 
   # win-charge_tests:
