@@ -109,7 +109,7 @@ jobs:
         uses: actions/cache/restore@v4
         with:
           path: tests/basic_tests/.pytest-cache
-          key: ${{ github.job }}-${{ github.sha }}
+          key: ${{ github.job }}-${{ github.event_name == 'pull_request_target' && github.event.pull_request.id || github.ref }}
 
       - name: basic_tests
         run : |
@@ -136,7 +136,7 @@ jobs:
         uses: actions/cache/save@v4
         with:
           path: tests/basic_tests/.pytest-cache
-          key: ${{ github.job }}-${{ github.sha }}
+          key: ${{ github.job }}-${{ github.event_name == 'pull_request_target' && github.event.pull_request.id || github.ref }}
 
   # macos-charge_tests:
   #   if: |
