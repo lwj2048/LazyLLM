@@ -16,7 +16,7 @@ concurrency:
 
 env:
   POETRY_VERSION: "1.8.3"
-  PYTHON_VERSION: "3.10.9"cd
+  PYTHON_VERSION: "3.10.9"
   
 jobs:
   macos-basic_tests:
