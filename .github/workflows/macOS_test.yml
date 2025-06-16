@@ -106,7 +106,7 @@ jobs:
           pip install dist/lazyllm*.whl
 
       - name: Restore pytest cache
-        uses: actions/cache@v4
+        uses: actions/cache/restore@v4
         with:
           path: tests/basic_tests/.pytest_cache
           key: ${{ github.job }}-${{ github.sha }}
@@ -125,7 +125,7 @@ jobs:
 
       - name: Save pytest cache
         if: always()
-        uses: actions/cache@v4
+        uses: actions/cache/save@v4
         with:
           path: tests/basic_tests/.pytest_cache
           key: ${{ github.job }}-${{ github.sha }}
