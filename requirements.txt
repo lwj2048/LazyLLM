@@ -22,7 +22,7 @@ psycopg2-binary
 sqlalchemy
 psutil
 pypdf
-numpy==1.26.4
+numpy==1.26.3
 async-timeout
 httpx<0.28.0
 docx2txt
