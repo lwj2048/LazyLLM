@@ -70,6 +70,7 @@ jobs:
           
       - name: Copy poetry.lock to root directory
         run: |
+          echo ${{ github.job }}-${{ github.sha }}
           git branch
           cd LazyLLM-Env &&git branch 
           cd ..
@@ -117,7 +118,7 @@ jobs:
          pip install -r tests/requirements.txt
          pip install -r tests/requirements_mac.txt
          export LAZYLLM_DATA_PATH=/tmp/lazyllm/data
-         python -m pytest -v -m "not skip_on_mac" --lf --last-failed-no-failures=all --reruns=2 tests/basic_tests/
+         python -m pytest -v -m "not skip_on_mac" --lf --last-failed-no-failures=all tests/basic_tests/
         timeout-minutes: 30
         env :
          GITHUB_TOKEN: ${{ secrets.PERSONAL_GITHUB_TOKEN }}      
